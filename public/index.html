@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Subir y descargar archivos</title>
+  <style>
+    #file-upload {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Subir y descargar archivos</h1>
+
+  <h2>Subir archivo</h2>
+
+
+<form action="/files/send" enctype="multipart/form-data" method="POST"> 
+   <input type="file" name="file" />
+   <input type="submit" value="Upload a file"/>
+</form>
+
+
+  <h2>Listar archivos</h2>
+  <ul id="file-list"></ul>
+
+  <script>
+
+    // Función para listar los archivos
+    async function listFiles() {
+      const response = await fetch('/files/list');
+      if (response.ok) {
+        const filesResponse = await response.json();
+
+        if ( filesResponse.hasError ) {
+          alert( filesResponse.message );
+          return;
+        }
+        const { data: files } = filesResponse;
+        
+        const list = document.getElementById('file-list');
+        list.innerHTML = '';
+        for (const file of files) {
+          const item = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = `/files/get/${file}`;
+          link.textContent = file;
+          item.appendChild(link);
+          list.appendChild(item);
+        }
+      } else {
+        alert('Error al listar archivos');
+      }
+    }
+
+    // Llamar a la función para listar los archivos al cargar la página
+    listFiles();
+  </script>
+</body>
+</html>
