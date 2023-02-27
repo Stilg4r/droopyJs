@@ -5,7 +5,6 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import express from 'express';
 import log4js from 'log4js';
-import path from 'path';
 import { PORT } from './../env.js';
 import { createStream } from 'rotating-file-stream';
 import { routeGenerator } from './core/routeGenerator.service';
