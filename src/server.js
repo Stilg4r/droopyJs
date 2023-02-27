@@ -5,9 +5,13 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import express from 'express';
 import log4js from 'log4js';
+import path from 'path';
 import { PORT } from './../env.js';
 import { createStream } from 'rotating-file-stream';
 import { routeGenerator } from './core/routeGenerator.service';
+
+const logPath = path.join(__dirname, '../log/error.log');
+const logPathExpress = path.join(__dirname, '../log/express.log');
 
 // log4js para el log de errores
 const loggerFile = {
@@ -19,7 +23,7 @@ const loggerFile = {
 log4js.configure({
 appenders: {
   stdout: { type: "stdout" },
-  errorFile: { ...loggerFile, filename: "./log/error.log" }
+  errorFile: { ...loggerFile, filename: logPath }
 },
 categories: {
     default: { appenders: ["stdout"], level: "info" },
@@ -33,7 +37,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
 app.use(express.urlencoded({ extended: false }));
 //Logger
-const stream = createStream('./log/express.log', {
+const stream = createStream(logPathExpress, {
   size: '10M',
   interval: '7d',
   compress: 'gzip',
@@ -46,14 +50,6 @@ app.use(cors());
 app.use(hpp());
 app.use(helmet());
 app.disable('x-powered-by');
-
-//middlewares config
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  next();
-});
 
 /** ROUTES */
 const routes = routeGenerator(path.join(__dirname, 'modules'))

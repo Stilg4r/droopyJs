@@ -30,14 +30,11 @@ const list = async (req, res) => {
 };
 
 const sendFile = async (req, res) => {
-  
   const {
     params: { 1: file },
     headers: { range }
   } = req;
-
   try{
-//////
     const filePath = `${filesPath}${file}`;
     if ( ! fs.existsSync(filePath) ) {
       return res.status(404).json({
